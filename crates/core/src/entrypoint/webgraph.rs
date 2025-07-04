@@ -85,11 +85,14 @@ impl WebgraphWorker {
 
         let source = WarcSource::from(job.config.clone());
 
+        info!("Jim job {:#?}", job);
         let warc_files = download_all_warc_files(&job.warc_paths, &source);
         pin!(warc_files);
 
+        info!("Jim iterating...");
         for file in warc_files.by_ref() {
             for record in file.records().flatten() {
+                // info!("Jim2 record {:#?}", record);
                 let webpage =
                     match Html::parse_without_text(&record.response.body, &record.request.url) {
                         Ok(webpage) => webpage,
@@ -203,7 +206,8 @@ impl Webgraph {
         let host_rank_store =
             Arc::new(speedy_kv::Db::open_or_create(&config.host_rank_store_path)?);
 
-        let num_workers = usize::from(std::thread::available_parallelism()?);
+        // let num_workers = usize::from(std::thread::available_parallelism()?);
+        let num_workers = 1;
 
         let mut handlers = Vec::new();
         let graph_path = &config.graph_base_path;

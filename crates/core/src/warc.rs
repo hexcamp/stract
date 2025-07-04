@@ -78,6 +78,7 @@ impl WarcFile {
     }
 
     pub fn records(&self) -> RecordIterator<&[u8]> {
+        debug!("Jim records 1");
         RecordIterator {
             reader: BufReader::new(MultiGzDecoder::new(&self.bytes[..])),
             num_reads: 0,
@@ -337,6 +338,10 @@ impl Display for PayloadType {
 pub struct Response {
     pub body: String,
     pub payload_type: Option<PayloadType>,
+    // WARC-Target-URI
+    pub url: String,
+    // WARC-Date
+    pub date: Option<chrono::DateTime<chrono::Utc>>,
 }
 
 impl Response {
@@ -353,10 +358,21 @@ impl Response {
                 .header
                 .get("WARC-IDENTIFIED-PAYLOAD-TYPE")
                 .and_then(|p| PayloadType::from_str(p).ok()),
+            url: record
+                .header
+                .get("WARC-TARGET-URI")
+                .ok_or(Error::WarcParse("No target url".to_string()))?
+                .to_owned(),
+            date: record.header.get("WARC-DATE").and_then(|d| {
+                chrono::DateTime::parse_from_rfc3339(d)
+                    .ok()
+                    .map(|d| d.with_timezone(&chrono::Utc))
+            }),
         })
     }
 }
 
+/* 
 #[cfg(test)]
 impl Arbitrary for Response {
     type Parameters = ();
@@ -368,6 +384,7 @@ impl Arbitrary for Response {
             .boxed()
     }
 }
+*/
 
 #[derive(Debug)]
 #[cfg_attr(test, derive(Clone, PartialEq))]
@@ -428,6 +445,7 @@ impl<R: Read> RecordIterator<R> {
 
         rtrim(&mut version);
 
+        debug!("Jim new_raw 1");
         if !version.to_uppercase().starts_with("WARC/1.") {
             return Some(Err(
                 Error::WarcParse("Unknown WARC version".to_string()).into()
@@ -505,6 +523,7 @@ impl<R: Read> RecordIterator<R> {
         }
 
         let record = RawWarcRecord { header, content };
+        debug!("Jim new_raw 2 record.header {:#?}", record.header);
 
         Some(Ok(record))
     }
@@ -531,6 +550,7 @@ impl<R: Read> Iterator for RecordIterator<R> {
             let item = item.unwrap();
 
             if let Some(warc_type) = item.header.get("WARC-TYPE") {
+                debug!("Jim Iterator warc_type: {}", warc_type);
                 if warc_type.as_str() == "request" {
                     if request.is_some() {
                         return Some(Err(Error::WarcParse(
@@ -541,6 +561,7 @@ impl<R: Read> Iterator for RecordIterator<R> {
 
                     match Request::from_raw(item) {
                         Ok(req) => {
+                            debug!("Jim request found");
                             request = Some(req);
                         }
                         Err(err) => return Some(Err(Error::WarcParse(err.to_string()).into())),
@@ -561,6 +582,8 @@ impl<R: Read> Iterator for RecordIterator<R> {
 
                     match Response::from_raw(item) {
                         Ok(res) => {
+                            // debug!("Jim res {:#?}", res);
+                            debug!("Jim response found");
                             response = Some(res);
                         }
                         Err(err) => {
@@ -583,6 +606,7 @@ impl<R: Read> Iterator for RecordIterator<R> {
 
                     match Metadata::from_raw(item) {
                         Ok(met) => {
+                            debug!("Jim metadata found");
                             metadata = Some(met);
                         }
                         Err(err) => return Some(Err(Error::WarcParse(err.to_string()).into())),
@@ -590,16 +614,46 @@ impl<R: Read> Iterator for RecordIterator<R> {
                 }
             }
 
+            /*
             if request.is_some() && response.is_some() && metadata.is_some() {
+                break;
+            }
+            */
+            /* 
+            if request.is_some() && response.is_some() {
+                break;
+            }
+            */
+            if response.is_some() {
                 break;
             }
         }
 
-        Some(Ok(WarcRecord {
+        debug!("Jim request {:#?}", request);
+        if request.is_none() && response.is_some() {
+            let resp = response.as_ref().unwrap();
+            request = Some(Request {
+                url: resp.url.clone(),
+                date: resp.date.clone()
+            });
+        }
+        // debug!("Jim response {:#?}", response);
+        debug!("Jim response (data omitted)");
+        debug!("Jim metadata {:#?}", metadata);
+        if metadata.is_none() {
+            metadata = Some(Metadata {
+                fetch_time_ms: 0
+            });
+        }
+        let rec = Some(Ok(WarcRecord {
             request: request?,
             response: response?,
             metadata: metadata?,
-        }))
+        }));
+        // debug!("Jim WarcRecord {:#?}", rec);
+        debug!("Jim WarcRecord (data omitted)");
+
+        rec
     }
 }
 
@@ -838,6 +892,8 @@ mod tests {
             response: Response {
                 body: "body of a".to_string(),
                 payload_type: Some(PayloadType::Html),
+                url: "https://a.com".to_string(),
+                date: Some(date),
             },
             metadata: Metadata {
                 fetch_time_ms: 1337,
@@ -853,6 +909,8 @@ mod tests {
             response: Response {
                 body: "body of b".to_string(),
                 payload_type: None,
+                url: "https://b.com".to_string(),
+                date: Some(date),
             },
             metadata: Metadata {
                 fetch_time_ms: 4242,
@@ -892,6 +950,8 @@ mod tests {
             response: Response {
                 body: utf8.to_string(),
                 payload_type: Some(PayloadType::Html),
+                url: "https://a.com".to_string(),
+                date: None,
             },
             metadata: Metadata { fetch_time_ms: 0 },
         };
@@ -925,6 +985,8 @@ mod tests {
             response: Response {
                 body: body.to_string(),
                 payload_type: Some(PayloadType::Html),
+                url: "https://a.com".to_string(),
+                date: None,
             },
             metadata: Metadata { fetch_time_ms: 0 },
         };

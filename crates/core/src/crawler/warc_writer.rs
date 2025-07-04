@@ -119,6 +119,8 @@ async fn writer_task(mut rx: tokio::sync::mpsc::Receiver<WarcWriterMessage>, s3:
                             response: warc::Response {
                                 body: datum.body,
                                 payload_type: Some(datum.payload_type),
+                                url: datum.url.to_string(),
+                                date: Some(datum.date),
                             },
                             metadata: warc::Metadata {
                                 fetch_time_ms: datum.fetch_time_ms,

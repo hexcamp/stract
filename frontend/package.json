@@ -71,9 +71,6 @@
     "ts-pattern": "^5.0.6",
     "uuid": "^10.0.0"
   },
-  "engines": {
-    "node": "^20.10.x"
-  },
   "overrides": {
     "@sveltejs/kit": {
       "cookie": "^0.7.0"

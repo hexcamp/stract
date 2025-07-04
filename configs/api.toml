@@ -11,7 +11,8 @@ prometheus_host = "0.0.0.0:3001"
 top_phrases_for_autosuggest = 1_000
 
 [spell_check]
-path = "data/web_spell/checker"
+#path = "data/web_spell/checker"
+path = "data/web_spell/0"
 
 [spell_check.correction_config]
 correction_threshold = 0.0

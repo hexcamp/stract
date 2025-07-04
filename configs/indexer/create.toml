@@ -1,9 +1,76 @@
 host_centrality_store_path = "./data/centrality"
-limit_warc_files = 20
+limit_warc_files = 500
 output_path = "./data/index"
 # minimum_clean_words = 40
 
-[warc_source]
+[warc_source2]
 folder = "./data"
 names = ["sample.warc.gz"]
 type = "Local"
+
+[warc_source]
+folder = "/Users/jim/hexcamp-jpmba/hexagon-content/vichex/community-associations/data"
+names = [
+  "commassocs-blenkinsop-000000.extracted.warc.gz",
+  "commassocs-broadmead-000000.extracted.warc.gz",
+  "commassocs-burnsidegorge-000000.extracted.warc.gz",
+  "commassocs-cadborobay-000000.extracted.warc.gz",
+  "commassocs-camosun-000000.extracted.warc.gz",
+  "commassocs-carey-000000.extracted.warc.gz",
+  "commassocs-cordovabay-000000.extracted.warc.gz",
+  "commassocs-downtownresidents-000000.extracted.warc.gz",
+  "commassocs-fairfield-000000.extracted.warc.gz",
+  "commassocs-falaise-000000.extracted.warc.gz",
+  "commassocs-fernwoodca-000000.extracted.warc.gz",
+  "commassocs-fernwoodnrg-000000.extracted.warc.gz",
+  "commassocs-gordonhead-000000.extracted.warc.gz",
+  "commassocs-gorgetillicum-000000.extracted.warc.gz",
+  "commassocs-jamesbay-000000.extracted.warc.gz",
+  "commassocs-mounttolmie-000000.extracted.warc.gz",
+  "commassocs-mountviewcolquitz-000000.extracted.warc.gz",
+  "commassocs-northjubilee-000000.extracted.warc.gz",
+  "commassocs-northpark-000000.extracted.warc.gz",
+  "commassocs-northquadra-000000.extracted.warc.gz",
+  "commassocs-oaklands-000000.extracted.warc.gz",
+  "commassocs-prospectlake-000000.extracted.warc.gz",
+  "commassocs-quadracedarhill-000000.extracted.warc.gz",
+  "commassocs-quadravillage-000000.extracted.warc.gz",
+  "commassocs-rockland-000000.extracted.warc.gz",
+  "commassocs-royaloak-000000.extracted.warc.gz",
+  "commassocs-southjubilee-000000.extracted.warc.gz",
+  "commassocs-vicwest-000000.extracted.warc.gz"
+]
+type = "Local"
+
+[warc_source3]
+folder = "/Users/jim/hexcamp-jpmba/hexagon-content/vichex/community-associations/data"
+names = [
+  "commassocs-blenkinsop-000000.extracted.warc.gz",
+  "commassocs-broadmead-000000.extracted.warc.gz",
+  "commassocs-burnsidegorge-000000.extracted.warc.gz",
+  "commassocs-cadborobay-000000.extracted.warc.gz",
+  "commassocs-camosun-000000.extracted.warc.gz",
+  "commassocs-carey-000000.extracted.warc.gz",
+  "commassocs-cordovabay-000000.extracted.warc.gz",
+  "commassocs-downtownresidents-000000.extracted.warc.gz",
+  "commassocs-fairfield-000000.extracted.warc.gz",
+  "commassocs-falaise-000000.extracted.warc.gz",
+  "commassocs-fernwoodca-000000.extracted.warc.gz",
+  "commassocs-fernwoodnrg-000000.extracted.warc.gz",
+  "commassocs-gordonhead-000000.extracted.warc.gz",
+  "commassocs-gorgetillicum-000000.extracted.warc.gz",
+  "commassocs-jamesbay-000000.extracted.warc.gz",
+  "commassocs-mounttolmie-000000.extracted.warc.gz",
+  "commassocs-mountviewcolquitz-000000.extracted.warc.gz",
+  "commassocs-northjubilee-000000.extracted.warc.gz",
+  "commassocs-northpark-000000.extracted.warc.gz",
+  "commassocs-northquadra-000000.extracted.warc.gz",
+  "commassocs-oaklands-000000.extracted.warc.gz",
+  "commassocs-prospectlake-000000.extracted.warc.gz",
+  "commassocs-quadracedarhill-000000.extracted.warc.gz",
+  "commassocs-quadravillage-000000.extracted.warc.gz",
+  "commassocs-rockland-000000.extracted.warc.gz",
+  "commassocs-royaloak-000000.extracted.warc.gz",
+  "commassocs-southjubilee-000000.extracted.warc.gz",
+  "commassocs-vicwest-000000.extracted.warc.gz"
+]
