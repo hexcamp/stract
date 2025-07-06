@@ -6,3 +6,4 @@ import type { LayoutLoad } from './$types';
 setGlobalApiBase(PUBLIC_API_BASE || 'http://0.0.0.0:3000');
 
 export const load: LayoutLoad = async () => ({ globals: await globals() });
+export const ssr = false;
