@@ -11,13 +11,15 @@ COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 # Build application
 COPY . .
-RUN cargo build --release --bins
+RUN cargo build --release --bin stract
 
 # We do not need the Rust toolchain to run the binary!
-#FROM debian:bookworm-slim AS runtime
-#WORKDIR /app
-#COPY --from=builder /app/target/release/stract /usr/local/bin
-#	libssl.so.3 => not found
-#	libcrypto.so.3 => not found
+FROM debian:bookworm-slim AS runtime
+WORKDIR /app
+COPY --from=builder /app/target/release/stract /usr/local/bin
+COPY --from=builder /lib/x86_64-linux-gnu/libssl.so.3 /lib/x86_64-linux-gnu
+COPY --from=builder /lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu
 
-ENTRYPOINT ["/bin/sh"]
+WORKDIR /
+
+ENTRYPOINT ["/usr/local/bin/stract"]

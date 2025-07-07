@@ -1,0 +1,6 @@
+graph_base_path = "data/webgraph"
+
+[warc_source]
+folder = "data"
+names = ["sample.warc.gz"]
+type = "Local"
