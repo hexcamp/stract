@@ -5,8 +5,8 @@ docker rm -f stract-frontend
 docker run \
   -it \
   --rm \
+  -p 3000:3000 \
   --name stract-frontend \
-  --entrypoint /bin/sh \
   ghcr.io/hexcamp/stract/stract-frontend
 
 
